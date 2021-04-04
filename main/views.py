@@ -8,7 +8,7 @@ from rest_framework import generics, renderers
 class CategoriesListCreateView(generics.ListCreateAPIView):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
-    filterset_fields = ['id']
+    filterset_fields = ['id', 'name']
     renderer_classes = [renderers.JSONRenderer]
 
 
@@ -26,7 +26,7 @@ class CategoriesDeleteView(generics.DestroyAPIView):
 class PicturesListCreateView(generics.ListCreateAPIView):
     queryset = Pictures.objects.all()
     serializer_class = PicturesSerializer
-    filterset_fields = ['name', 'author', 'id']
+    filterset_fields = ['name', 'author', 'id', 'categories']
     renderer_classes = [renderers.JSONRenderer]
 
 
