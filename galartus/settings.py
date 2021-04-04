@@ -25,11 +25,7 @@ SECRET_KEY = 'vk99b=$e_6w9gmxul@dv+$m#r79^c9o@7a_n!dfei((#s3d135'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
-# INTERNAL_IPS = [
-#     '127.0.0.1',
-# ]
+ALLOWED_HOSTS = ['192.168.1.2', '127.0.0.1']
 
 
 # Application definition
@@ -44,7 +40,6 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'rest_framework',
     'django_filters',
-    # 'debug_toolbar',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +50,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
 ROOT_URLCONF = 'galartus.urls'
@@ -85,12 +79,8 @@ WSGI_APPLICATION = 'galartus.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': str(BASE_DIR / 'db.sqlite3'),
     }
-}
-
-REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
 # Password validation
@@ -111,6 +101,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+            'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/

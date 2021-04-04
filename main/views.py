@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from .models import Categories, Pictures
 from .serialize import CategoriesSerializer, PicturesSerializer
-from rest_framework import generics
+from rest_framework import generics, renderers
 
 
 # categories
@@ -9,6 +9,7 @@ class CategoriesListCreateView(generics.ListCreateAPIView):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
     filterset_fields = ['id']
+    renderer_classes = [renderers.JSONRenderer]
 
 
 class CategoriesUpdateView(generics.RetrieveUpdateAPIView):
@@ -26,6 +27,7 @@ class PicturesListCreateView(generics.ListCreateAPIView):
     queryset = Pictures.objects.all()
     serializer_class = PicturesSerializer
     filterset_fields = ['name', 'author', 'id']
+    renderer_classes = [renderers.JSONRenderer]
 
 
 class PicturesUpdateView(generics.RetrieveUpdateAPIView):
