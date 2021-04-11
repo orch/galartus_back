@@ -4,3 +4,5 @@ galartus/__pycache__/
 main/__pycache__/
 
 db.sqlite3
+
+media/content/categories/
