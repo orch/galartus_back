@@ -27,8 +27,19 @@ class CategoriesCreateView(APIView):
 
 
 class CategoriesUpdateView(generics.RetrieveUpdateAPIView):
-    queryset = Categories.objects.all()
-    serializer_class = CategoriesSerializer
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_object(self, pk):
+        return Categories.objects.get(pk=pk)
+
+    def put(self, request, pk):
+        categories = self.get_object(pk)
+        serializer = CategoriesSerializer(categories, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
 
 class CategoriesDeleteView(generics.DestroyAPIView):
@@ -56,8 +67,19 @@ class PicturesCreateView(APIView):
 
 
 class PicturesUpdateView(generics.RetrieveUpdateAPIView):
-    queryset = Pictures.objects.all()
-    serializer_class = PicturesSerializer
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_object(self, pk):
+        return Pictures.objects.get(pk=pk)
+
+    def put(self, request, pk):
+        pictures = self.get_object(pk)
+        serializer = PicturesSerializer(pictures, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PicturesDeleteView(generics.DestroyAPIView):
