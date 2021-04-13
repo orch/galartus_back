@@ -5,6 +5,7 @@ from rest_framework import generics, renderers
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
+import os
 
 
 # categories
@@ -14,10 +15,13 @@ class CategoriesListView(generics.ListAPIView):
     filterset_fields = ['id', 'name']
 
 
-class CategoriesCreateView(APIView):
+class CategoriesView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 
-    def post(self, request, format=None):
+    def get_object(self, pk):
+        return Categories.objects.get(pk=pk)
+
+    def post(self, request):
         serializer = CategoriesSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -25,15 +29,11 @@ class CategoriesCreateView(APIView):
         else:
             return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
-
-class CategoriesUpdateView(generics.RetrieveUpdateAPIView):
-    parser_classes = [MultiPartParser, FormParser]
-
-    def get_object(self, pk):
-        return Categories.objects.get(pk=pk)
-
     def put(self, request, pk):
         categories = self.get_object(pk)
+
+        os.remove(categories.image.path)
+
         serializer = CategoriesSerializer(categories, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -41,10 +41,13 @@ class CategoriesUpdateView(generics.RetrieveUpdateAPIView):
         else:
             return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, pk):
+        categories = self.get_object(pk)
+        if os.path.isfile(categories.image.path):
+            os.remove(categories.image.path)
 
-class CategoriesDeleteView(generics.DestroyAPIView):
-    queryset = Categories.objects.all()
-    serializer_class = CategoriesSerializer
+        categories.delete()
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
 # pictures
@@ -54,10 +57,13 @@ class PicturesListView(generics.ListAPIView):
     filterset_fields = ['name', 'author', 'id', 'categories']
 
 
-class PicturesCreateView(APIView):
+class PicturesView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 
-    def post(self, request, format=None):
+    def get_object(self, pk):
+        return Pictures.objects.get(pk=pk)
+
+    def post(self, request):
         serializer = PicturesSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -65,15 +71,11 @@ class PicturesCreateView(APIView):
         else:
             return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
-
-class PicturesUpdateView(generics.RetrieveUpdateAPIView):
-    parser_classes = [MultiPartParser, FormParser]
-
-    def get_object(self, pk):
-        return Pictures.objects.get(pk=pk)
-
     def put(self, request, pk):
         pictures = self.get_object(pk)
+
+        os.remove(pictures.image.path)
+
         serializer = PicturesSerializer(pictures, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
@@ -81,7 +83,10 @@ class PicturesUpdateView(generics.RetrieveUpdateAPIView):
         else:
             return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
+    def delete(self, request, pk):
+        pictures = self.get_object(pk)
+        if os.path.isfile(pictures.image.path):
+            os.remove(pictures.image.path)
 
-class PicturesDeleteView(generics.DestroyAPIView):
-    queryset = Pictures.objects.all()
-    serializer_class = PicturesSerializer
+        pictures.delete()
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)

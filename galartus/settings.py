@@ -14,7 +14,6 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.abspath(os.path.join(__file__, '../../../'))
-    # Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production

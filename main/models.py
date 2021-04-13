@@ -1,4 +1,6 @@
 from django.db import models
+# from django.dispatch import receiver
+# import os
 
 
 class Categories(models.Model):
