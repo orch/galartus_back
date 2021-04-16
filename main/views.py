@@ -1,6 +1,6 @@
 from django.http import HttpResponse
-from .models import Categories, Pictures
-from .serialize import CategoriesSerializer, PicturesSerializer
+from .models import Categories, Pictures, Exhibitions
+from .serialize import CategoriesSerializer, PicturesSerializer, ExhibitionsSerializer
 from rest_framework import generics, renderers
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -90,3 +90,47 @@ class PicturesView(APIView):
 
         pictures.delete()
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+
+#exhibition
+class ExhibitionsListView(generics.ListAPIView):
+    queryset = Exhibitions.objects.all()
+    serializer_class = ExhibitionsSerializer
+    filterset_fields = ['name', 'id', 'categories', 'date', 'time', 'price', 'weekday']
+
+
+class ExhibitionsView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_object(self, pk):
+        return Exhibitions.objects.get(pk=pk)
+
+    def post(self, request):
+
+        serializer = ExhibitionsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        exhibition = self.get_object(pk)
+
+        os.remove(exhibition.image.path)
+
+        serializer = ExhibitionsSerializer(exhibition, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        exhibition = self.get_object(pk)
+        if os.path.isfile(exhibition.image.path):
+            os.remove(exhibition.image.path)
+
+        exhibition.delete()
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
