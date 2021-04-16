@@ -5,6 +5,7 @@ from rest_framework import generics, renderers
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
+from django_filters import rest_framework as filters
 import os
 
 
@@ -93,10 +94,19 @@ class PicturesView(APIView):
 
 
 #exhibition
+class ExhibitionsFilter(filters.FilterSet):
+    min_price = filters.NumberFilter(field_name='price', lookup_expr='gte')
+    max_price = filters.NumberFilter(field_name='price', lookup_expr='lte')
+
+    class Meta:
+        model = Exhibitions
+        fields = ['name', 'id', 'categories', 'date', 'time', 'min_price', 'max_price', 'weekday']
+
+
 class ExhibitionsListView(generics.ListAPIView):
     queryset = Exhibitions.objects.all()
     serializer_class = ExhibitionsSerializer
-    filterset_fields = ['name', 'id', 'categories', 'date', 'time', 'price', 'weekday']
+    filterset_class = ExhibitionsFilter
 
 
 class ExhibitionsView(APIView):
