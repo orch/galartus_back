@@ -26,3 +26,18 @@ class Exhibitions(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=8)
     address = models.CharField(max_length=250)
     weekday = models.IntegerField(null=True)
+
+
+class Accounts(models.Model):
+    first_name = models.CharField(max_length=100, null=True)
+    last_name = models.CharField(max_length=100, null=True)
+    birthday = models.DateField(null=True)
+    nick_name = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='content/account', null=True)
+
+
+class Likes(models.Model):
+    picture = models.ForeignKey('Pictures', on_delete=models.CASCADE)
+    account = models.ForeignKey('Accounts', on_delete=models.CASCADE)
+
+

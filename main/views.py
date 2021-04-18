@@ -1,6 +1,7 @@
 from django.http import HttpResponse
-from .models import Categories, Pictures, Exhibitions
-from .serialize import CategoriesSerializer, PicturesSerializer, ExhibitionsSerializer
+from .models import Categories, Pictures, Exhibitions, Accounts, Likes
+from .serialize import CategoriesSerializer, PicturesSerializer, \
+                       ExhibitionsSerializer, AccountsSerializer, LikesSerializer
 from rest_framework import generics, renderers
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -143,4 +144,74 @@ class ExhibitionsView(APIView):
 
         exhibition.delete()
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+
+class AccountsListView(generics.ListAPIView):
+    queryset = Accounts.objects.all()
+    serializer_class = AccountsSerializer
+    filterset_fields = ['nick_name']
+
+
+class AccountsView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_object(self, pk):
+        return Accounts.objects.get(pk=pk)
+
+    def post(self, request):
+
+        serializer = AccountsSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        account = self.get_object(pk)
+
+        if os.path.isfile(account.image.path):
+            os.remove(account.image.path)
+
+        serializer = AccountsSerializer(account, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        account = self.get_object(pk)
+        if os.path.isfile(account.image.path):
+            os.remove(account.image.path)
+
+        account.delete()
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+
+class LikesListView(generics.ListAPIView):
+    queryset = Likes.objects.all()
+    serializer_class = LikesSerializer
+    filterset_fields = ['account']
+
+
+class LikesView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+
+    def get_object(self, pk):
+        return Likes.objects.get(pk=pk)
+
+    def post(self, request):
+
+        serializer = LikesSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LikesDeleteView(generics.DestroyAPIView):
+    queryset = Likes.objects.all()
+    serializer_class = AccountsSerializer
 

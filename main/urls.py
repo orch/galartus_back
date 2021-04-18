@@ -13,7 +13,16 @@ urlpatterns = [
     path('pictures/<int:pk>/delete', views.PicturesView.as_view(), name='main'),
 
     path('exhibitions', views.ExhibitionsListView.as_view()),
-    path('exhibition/create', views.ExhibitionsView.as_view(), name='main'),
-    path('exhibition/<int:pk>', views.ExhibitionsView.as_view(), name='main'),
-    path('exhibition/<int:pk>/delete', views.ExhibitionsView.as_view(), name='main'),
+    path('exhibitions/create', views.ExhibitionsView.as_view(), name='main'),
+    path('exhibitions/<int:pk>', views.ExhibitionsView.as_view(), name='main'),
+    path('exhibitions/<int:pk>/delete', views.ExhibitionsView.as_view(), name='main'),
+
+    path('accounts', views.AccountsListView.as_view()),
+    path('accounts/create', views.AccountsView.as_view(), name='main'),
+    path('accounts/<int:pk>', views.AccountsView.as_view(), name='main'),
+    path('accounts/<int:pk>/delete', views.AccountsView.as_view(), name='main'),
+
+    path('likes', views.LikesListView.as_view()),
+    path('likes/create', views.LikesView.as_view(), name='main'),
+    path('likes/<int:pk>/delete', views.LikesDeleteView.as_view()),
 ]
