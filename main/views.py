@@ -182,7 +182,8 @@ class AccountsView(APIView):
 
     def delete(self, request, pk):
         account = self.get_object(pk)
-        if os.path.isfile(account.image.path):
+
+        if account.image and os.path.isfile(account.image.path):
             os.remove(account.image.path)
 
         account.delete()
@@ -213,5 +214,5 @@ class LikesView(APIView):
 
 class LikesDeleteView(generics.DestroyAPIView):
     queryset = Likes.objects.all()
-    serializer_class = AccountsSerializer
+    serializer_class = LikesSerializer
 
