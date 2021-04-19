@@ -30,11 +30,19 @@ class AccountsSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class LikesSerializer(serializers.ModelSerializer):
+class LikesReadSerializer(serializers.ModelSerializer):
     picture = PicturesSerializer(many=False, read_only=True)
 
     class Meta:
         model = Likes
         fields = '__all__'
+
+
+class LikesWriteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Likes
+        fields = '__all__'
+
 
 

@@ -1,7 +1,8 @@
 from django.http import HttpResponse
 from .models import Categories, Pictures, Exhibitions, Accounts, Likes
 from .serialize import CategoriesSerializer, PicturesSerializer, \
-                       ExhibitionsSerializer, AccountsSerializer, LikesSerializer
+                       ExhibitionsSerializer, AccountsSerializer, \
+                       LikesReadSerializer, LikesWriteSerializer
 from rest_framework import generics, renderers
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
@@ -10,7 +11,7 @@ from django_filters import rest_framework as filters
 import os
 
 
-# categories
+# Categories
 class CategoriesListView(generics.ListAPIView):
     queryset = Categories.objects.all()
     serializer_class = CategoriesSerializer
@@ -52,7 +53,7 @@ class CategoriesView(APIView):
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
-# pictures
+# Pictures
 class PicturesListView(generics.ListAPIView):
     queryset = Pictures.objects.all()
     serializer_class = PicturesSerializer
@@ -94,7 +95,7 @@ class PicturesView(APIView):
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
-#exhibition
+# Exhibitions
 class ExhibitionsFilter(filters.FilterSet):
     min_price = filters.NumberFilter(field_name='price', lookup_expr='gte')
     max_price = filters.NumberFilter(field_name='price', lookup_expr='lte')
@@ -146,6 +147,7 @@ class ExhibitionsView(APIView):
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
+# Accounts
 class AccountsListView(generics.ListAPIView):
     queryset = Accounts.objects.all()
     serializer_class = AccountsSerializer
@@ -190,9 +192,10 @@ class AccountsView(APIView):
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
+# Likes
 class LikesListView(generics.ListAPIView):
     queryset = Likes.objects.all()
-    serializer_class = LikesSerializer
+    serializer_class = LikesReadSerializer
     filterset_fields = ['account']
 
 
@@ -203,8 +206,8 @@ class LikesView(APIView):
         return Likes.objects.get(pk=pk)
 
     def post(self, request):
+        serializer = LikesWriteSerializer(data=request.data)
 
-        serializer = LikesSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
@@ -214,5 +217,5 @@ class LikesView(APIView):
 
 class LikesDeleteView(generics.DestroyAPIView):
     queryset = Likes.objects.all()
-    serializer_class = LikesSerializer
+    serializer_class = LikesWriteSerializer
 
