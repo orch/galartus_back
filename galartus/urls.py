@@ -16,13 +16,24 @@ Including another URLconf
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-# import debug_toolbar
+from rest_framework import routers
 from galartus import settings
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView
+)
+from main import views
+
+# router = routers.DefaultRouter()
+# router.register(r'users', views.UserListView)
 
 urlpatterns = [
     path('', include('main.urls')),
+    path('users/', include('users.urls')),
     path('admin/', admin.site.urls),
-    # path('debug/', include(debug_toolbar.urls)),
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

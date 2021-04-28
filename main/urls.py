@@ -17,10 +17,10 @@ urlpatterns = [
     path('exhibitions/<int:pk>', views.ExhibitionsView.as_view(), name='main'),
     path('exhibitions/<int:pk>/delete', views.ExhibitionsView.as_view(), name='main'),
 
-    path('accounts', views.AccountsListView.as_view()),
-    path('accounts/create', views.AccountsView.as_view(), name='main'),
-    path('accounts/<int:pk>', views.AccountsView.as_view(), name='main'),
-    path('accounts/<int:pk>/delete', views.AccountsView.as_view(), name='main'),
+    # path('accounts', views.AccountsListView.as_view()),
+    # path('accounts/create', views.AccountsView.as_view(), name='main'),
+    # path('accounts/<int:pk>', views.AccountsView.as_view(), name='main'),
+    # path('accounts/<int:pk>/delete', views.AccountsView.as_view(), name='main'),
 
     path('likes', views.LikesListView.as_view()),
     path('likes/create', views.LikesView.as_view(), name='main'),

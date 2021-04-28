@@ -1,14 +1,22 @@
 from django.http import HttpResponse
-from .models import Categories, Pictures, Exhibitions, Accounts, Likes
+from .models import Categories, Pictures, Exhibitions, Likes  #, Accounts
 from .serialize import CategoriesSerializer, PicturesSerializer, \
-                       ExhibitionsSerializer, AccountsSerializer, \
+                       ExhibitionsSerializer,  \
                        LikesReadSerializer, LikesWriteSerializer
-from rest_framework import generics, renderers
+                       #UsersSerializer, AccountsSerializer,
+from django.contrib.auth.models import User
+from rest_framework import generics, viewsets
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from django_filters import rest_framework as filters
 import os
+
+
+# User
+# class UserListView(viewsets.ModelViewSet):
+#     queryset = User.objects.all()
+#     serializer_class = UsersSerializer
 
 
 # Categories
@@ -30,7 +38,7 @@ class CategoriesView(APIView):
             serializer.save()
             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
         else:
-            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk):
         categories = self.get_object(pk)
@@ -42,7 +50,7 @@ class CategoriesView(APIView):
             serializer.save()
             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
         else:
-            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
         categories = self.get_object(pk)
@@ -72,7 +80,7 @@ class PicturesView(APIView):
             serializer.save()
             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
         else:
-            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk):
         pictures = self.get_object(pk)
@@ -84,7 +92,7 @@ class PicturesView(APIView):
             serializer.save()
             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
         else:
-            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
         pictures = self.get_object(pk)
@@ -124,7 +132,7 @@ class ExhibitionsView(APIView):
             serializer.save()
             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
         else:
-            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, pk):
         exhibition = self.get_object(pk)
@@ -136,7 +144,7 @@ class ExhibitionsView(APIView):
             serializer.save()
             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
         else:
-            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
         exhibition = self.get_object(pk)
@@ -148,48 +156,48 @@ class ExhibitionsView(APIView):
 
 
 # Accounts
-class AccountsListView(generics.ListAPIView):
-    queryset = Accounts.objects.all()
-    serializer_class = AccountsSerializer
-    filterset_fields = ['nick_name']
-
-
-class AccountsView(APIView):
-    parser_classes = [MultiPartParser, FormParser]
-
-    def get_object(self, pk):
-        return Accounts.objects.get(pk=pk)
-
-    def post(self, request):
-
-        serializer = AccountsSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
-
-    def put(self, request, pk):
-        account = self.get_object(pk)
-
-        if os.path.isfile(account.image.path):
-            os.remove(account.image.path)
-
-        serializer = AccountsSerializer(account, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk):
-        account = self.get_object(pk)
-
-        if account.image and os.path.isfile(account.image.path):
-            os.remove(account.image.path)
-
-        account.delete()
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+# class AccountsListView(generics.ListAPIView):
+#     queryset = Accounts.objects.all()
+#     serializer_class = AccountsSerializer
+#     filterset_fields = ['nick_name']
+#
+#
+# class AccountsView(APIView):
+#     parser_classes = [MultiPartParser, FormParser]
+#
+#     def get_object(self, pk):
+#         return Accounts.objects.get(pk=pk)
+#
+#     def post(self, request):
+#
+#         serializer = AccountsSerializer(data=request.data)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+#         else:
+#             return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+#
+#     def put(self, request, pk):
+#         account = self.get_object(pk)
+#
+#         if os.path.isfile(account.image.path):
+#             os.remove(account.image.path)
+#
+#         serializer = AccountsSerializer(account, data=request.data, partial=True)
+#         if serializer.is_valid():
+#             serializer.save()
+#             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+#         else:
+#             return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+#
+#     def delete(self, request, pk):
+#         account = self.get_object(pk)
+#
+#         if account.image and os.path.isfile(account.image.path):
+#             os.remove(account.image.path)
+#
+#         account.delete()
+#         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
 # Likes
@@ -212,7 +220,7 @@ class LikesView(APIView):
             serializer.save()
             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
         else:
-            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+            return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LikesDeleteView(generics.DestroyAPIView):
