@@ -8,11 +8,13 @@ from rest_framework_simplejwt.tokens import RefreshToken
 import os
 from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import IsAuthenticated
 
 
 class UsersListView(generics.ListAPIView):
     queryset = NewUser.objects.all()
     serializer_class = UsersPostSerializer
+    permission_classes = [IsAuthenticated]
 
 
 class UsersView(APIView):

@@ -60,7 +60,6 @@ class PicturesListView(generics.ListAPIView):
     queryset = Pictures.objects.all()
     serializer_class = PicturesSerializer
     filterset_fields = ['name', 'author', 'id', 'categories']
-    permission_classes = [IsAuthenticated]
 
 
 class PicturesView(APIView):
