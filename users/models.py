@@ -29,11 +29,11 @@ class NewUser(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     first_name = models.CharField(max_length=150, blank=True)
-    # last_name = models.CharField(max_length=100, null=True)
-    # birthday = models.DateField(null=True)
-    # image = models.ImageField(upload_to='content/account', null=True)
+    last_name = models.CharField(max_length=100, null=True)
+    birthday = models.DateField(null=True)
+    image = models.ImageField(upload_to='content/account', null=True)
 
     objects = CustomAccountManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['user_name', 'first_name']
+    REQUIRED_FIELDS = ['user_name']
