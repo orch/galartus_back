@@ -3,20 +3,14 @@ from .models import Categories, Pictures, Exhibitions, Likes  #, Accounts
 from .serialize import CategoriesSerializer, PicturesSerializer, \
                        ExhibitionsSerializer,  \
                        LikesReadSerializer, LikesWriteSerializer
-                       #UsersSerializer, AccountsSerializer,
-from django.contrib.auth.models import User
+                       # AccountsSerializer,
 from rest_framework import generics, viewsets
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from django_filters import rest_framework as filters
 import os
-
-
-# User
-# class UserListView(viewsets.ModelViewSet):
-#     queryset = User.objects.all()
-#     serializer_class = UsersSerializer
+from rest_framework.permissions import IsAuthenticated
 
 
 # Categories
@@ -66,6 +60,7 @@ class PicturesListView(generics.ListAPIView):
     queryset = Pictures.objects.all()
     serializer_class = PicturesSerializer
     filterset_fields = ['name', 'author', 'id', 'categories']
+    permission_classes = [IsAuthenticated]
 
 
 class PicturesView(APIView):
