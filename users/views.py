@@ -9,6 +9,7 @@ import os
 from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import BasePermission
 
 
 class UsersListView(generics.ListAPIView):

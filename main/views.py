@@ -1,16 +1,15 @@
 from django.http import HttpResponse
-from .models import Categories, Pictures, Exhibitions, Likes  #, Accounts
+from .models import Categories, Pictures, Exhibitions, Likes
 from .serialize import CategoriesSerializer, PicturesSerializer, \
                        ExhibitionsSerializer,  \
                        LikesReadSerializer, LikesWriteSerializer
-                       # AccountsSerializer,
 from rest_framework import generics, viewsets
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from django_filters import rest_framework as filters
 import os
-from rest_framework.permissions import IsAuthenticated
+from .permissions import StaffAndAdmin, UserOnly
 
 
 # Categories
@@ -22,6 +21,7 @@ class CategoriesListView(generics.ListAPIView):
 
 class CategoriesView(APIView):
     parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [StaffAndAdmin]
 
     def get_object(self, pk):
         return Categories.objects.get(pk=pk)
@@ -64,6 +64,7 @@ class PicturesListView(generics.ListAPIView):
 
 class PicturesView(APIView):
     parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [StaffAndAdmin]
 
     def get_object(self, pk):
         return Pictures.objects.get(pk=pk)
@@ -115,6 +116,7 @@ class ExhibitionsListView(generics.ListAPIView):
 
 class ExhibitionsView(APIView):
     parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [StaffAndAdmin]
 
     def get_object(self, pk):
         return Exhibitions.objects.get(pk=pk)
@@ -203,6 +205,7 @@ class LikesListView(generics.ListAPIView):
 
 class LikesView(APIView):
     parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [UserOnly]
 
     def get_object(self, pk):
         return Likes.objects.get(pk=pk)
@@ -220,4 +223,5 @@ class LikesView(APIView):
 class LikesDeleteView(generics.DestroyAPIView):
     queryset = Likes.objects.all()
     serializer_class = LikesWriteSerializer
+    permission_classes = [UserOnly]
 
