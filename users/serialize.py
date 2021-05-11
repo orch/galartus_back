@@ -1,10 +1,10 @@
-from rest_framework  import serializers
+from rest_framework import serializers
 from users.models import NewUser
 
 
 class UsersPostSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField()
-    user_name = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
+    # user_name = serializers.CharField(required=False)
     password = serializers.CharField(write_only=True)
 
     class Meta:
@@ -12,7 +12,7 @@ class UsersPostSerializer(serializers.ModelSerializer):
         birthday = serializers.DateField(input_formats='%Y-%m-%d')
         read_only_fields = ('is_active', 'is_staff')
         extra_kwargs = {'password': {'write_only': True}}
-        fields = ('id', 'email', 'user_name', 'password', 'first_name',
+        fields = ('id', 'email', 'password', 'first_name',
                   'last_name', 'birthday', 'image', 'is_active', 'is_staff')
 
     def create(self, validated_data):
@@ -26,15 +26,15 @@ class UsersPostSerializer(serializers.ModelSerializer):
 
 
 class UsersPutSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField()
+    email = serializers.EmailField(required=True)
     password = serializers.CharField(write_only=True)
 
     class Meta:
         model = NewUser
         birthday = serializers.DateField(input_formats='%Y-%m-%d')
-        read_only_fields = ('is_active', 'is_staff', 'user_name')
+        read_only_fields = ('is_active', 'is_staff', 'email')
         extra_kwargs = {'password': {'write_only': True}}
-        fields = ('id', 'email', 'user_name', 'password', 'first_name',
+        fields = ('id', 'email', 'password', 'first_name',
                   'last_name', 'birthday', 'image', 'is_active', 'is_staff')
 
     def create(self, validated_data):

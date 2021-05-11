@@ -6,3 +6,11 @@ main/__pycache__/
 db.sqlite3
 
 media/content/categories/
+
+
+users/migrations/*
+main/migrations/
+
+users/migrations/
+
+

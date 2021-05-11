@@ -151,6 +151,38 @@ class ExhibitionsView(APIView):
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
+# Likes
+class LikesListView(generics.ListAPIView):
+    queryset = Likes.objects.all()
+    serializer_class = LikesReadSerializer
+    filterset_fields = ['account']
+
+
+class LikesView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [UserOnly]
+
+    def get_object(self, pk):
+        return Likes.objects.get(pk=pk)
+
+    def post(self, request):
+        serializer = LikesWriteSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LikesDeleteView(generics.DestroyAPIView):
+    queryset = Likes.objects.all()
+    serializer_class = LikesWriteSerializer
+    permission_classes = [UserOnly]
+
+
+
+
 # Accounts
 # class AccountsListView(generics.ListAPIView):
 #     queryset = Accounts.objects.all()
@@ -194,34 +226,3 @@ class ExhibitionsView(APIView):
 #
 #         account.delete()
 #         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
-
-
-# Likes
-class LikesListView(generics.ListAPIView):
-    queryset = Likes.objects.all()
-    serializer_class = LikesReadSerializer
-    filterset_fields = ['account']
-
-
-class LikesView(APIView):
-    parser_classes = [MultiPartParser, FormParser]
-    permission_classes = [UserOnly]
-
-    def get_object(self, pk):
-        return Likes.objects.get(pk=pk)
-
-    def post(self, request):
-        serializer = LikesWriteSerializer(data=request.data)
-
-        if serializer.is_valid():
-            serializer.save()
-            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class LikesDeleteView(generics.DestroyAPIView):
-    queryset = Likes.objects.all()
-    serializer_class = LikesWriteSerializer
-    permission_classes = [UserOnly]
-

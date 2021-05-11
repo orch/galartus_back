@@ -27,17 +27,26 @@ class Exhibitions(models.Model):
     weekday = models.IntegerField(null=True)
 
 
+class Likes(models.Model):
+    picture = models.ForeignKey('Pictures', on_delete=models.CASCADE)
+    account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+
+class CartLine(models.Model):
+    exhibition = models.ForeignKey('Exhibitions', on_delete=models.CASCADE)
+
+
+class Cart(models.Model):
+    cart_line = models.ForeignKey('CartLine', on_delete=models.CASCADE)
+
+
+
 # class Accounts(models.Model):
 #     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 #     first_name = models.CharField(max_length=100, null=True)
 #     last_name = models.CharField(max_length=100, null=True)
 #     birthday = models.DateField(null=True)
 #     image = models.ImageField(upload_to='content/account', null=True)
-
-
-class Likes(models.Model):
-    picture = models.ForeignKey('Pictures', on_delete=models.CASCADE)
-    account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 
 

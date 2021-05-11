@@ -60,6 +60,9 @@ class UsersView(APIView):
         if account.image and os.path.isfile(account.image.path):
             os.remove(account.image.path)
 
+        # account.delete()
+        # return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
         request.data['is_active'] = False
         serializer = UsersPutSerializer(account, data=request.data, partial=True)
         if serializer.is_valid():
@@ -74,8 +77,11 @@ class BlackListView(APIView):
     def post(self, request):
         try:
             refresh_token = request.data['refresh_token']
+            print(refresh_token)
             token = RefreshToken(refresh_token)
+            print('qwet')
             token.blacklist()
+            print('jkl')
             return HttpResponse(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
