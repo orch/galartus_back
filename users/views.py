@@ -33,6 +33,7 @@ class UsersView(APIView):
 
     def post(self, request, format='json'):
         serializer = self.get_serializer(request)
+        print(serializer)
 
         if serializer.is_valid():
             user = serializer.save()

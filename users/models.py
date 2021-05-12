@@ -32,6 +32,8 @@ class NewUser(AbstractBaseUser, PermissionsMixin):
     birthday = models.DateField(null=True)
     image = models.ImageField(upload_to='content/account', null=True)
     is_user = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=False)
+    is_employee = models.BooleanField(default=False)
 
     objects = CustomAccountManager()
 

@@ -12,8 +12,8 @@ class UsersPostSerializer(serializers.ModelSerializer):
         birthday = serializers.DateField(input_formats='%Y-%m-%d')
         read_only_fields = ('is_active', 'is_staff')
         extra_kwargs = {'password': {'write_only': True}}
-        fields = ('id', 'email', 'password', 'first_name',
-                  'last_name', 'birthday', 'image', 'is_active', 'is_staff')
+        fields = ('id', 'email', 'password', 'first_name', 'is_user',
+                  'last_name', 'birthday', 'image', 'is_active', 'is_admin', 'is_employee')
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
