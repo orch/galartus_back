@@ -37,7 +37,10 @@ class CategoriesView(APIView):
     def put(self, request, pk):
         categories = self.get_object(pk)
 
-        os.remove(categories.image.path)
+        try:
+            os.remove(categories.image.path)
+        except:
+            pass
 
         serializer = CategoriesSerializer(categories, data=request.data, partial=True)
         if serializer.is_valid():
@@ -80,7 +83,10 @@ class PicturesView(APIView):
     def put(self, request, pk):
         pictures = self.get_object(pk)
 
-        os.remove(pictures.image.path)
+        try:
+            os.remove(pictures.image.path)
+        except:
+            pass
 
         serializer = PicturesSerializer(pictures, data=request.data, partial=True)
         if serializer.is_valid():
@@ -155,7 +161,7 @@ class ExhibitionsView(APIView):
 class LikesListView(generics.ListAPIView):
     queryset = Likes.objects.all()
     serializer_class = LikesReadSerializer
-    filterset_fields = ['account']
+    # filterset_fields = ['account']
 
 
 class LikesView(APIView):
@@ -179,50 +185,3 @@ class LikesDeleteView(generics.DestroyAPIView):
     queryset = Likes.objects.all()
     serializer_class = LikesWriteSerializer
     permission_classes = [UserOnly]
-
-
-
-
-# Accounts
-# class AccountsListView(generics.ListAPIView):
-#     queryset = Accounts.objects.all()
-#     serializer_class = AccountsSerializer
-#     filterset_fields = ['nick_name']
-#
-#
-# class AccountsView(APIView):
-#     parser_classes = [MultiPartParser, FormParser]
-#
-#     def get_object(self, pk):
-#         return Accounts.objects.get(pk=pk)
-#
-#     def post(self, request):
-#
-#         serializer = AccountsSerializer(data=request.data)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
-#         else:
-#             return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
-#
-#     def put(self, request, pk):
-#         account = self.get_object(pk)
-#
-#         if os.path.isfile(account.image.path):
-#             os.remove(account.image.path)
-#
-#         serializer = AccountsSerializer(account, data=request.data, partial=True)
-#         if serializer.is_valid():
-#             serializer.save()
-#             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
-#         else:
-#             return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
-#
-#     def delete(self, request, pk):
-#         account = self.get_object(pk)
-#
-#         if account.image and os.path.isfile(account.image.path):
-#             os.remove(account.image.path)
-#
-#         account.delete()
-#         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
