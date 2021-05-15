@@ -10,6 +10,7 @@ from rest_framework import status
 from django_filters import rest_framework as filters
 import os
 from .permissions import StaffAndAdmin, UserOnly
+from users.models import NewUser
 
 
 # Categories
@@ -83,10 +84,8 @@ class PicturesView(APIView):
     def put(self, request, pk):
         pictures = self.get_object(pk)
 
-        try:
+        if os.path.isfile(pictures.image.path):
             os.remove(pictures.image.path)
-        except:
-            pass
 
         serializer = PicturesSerializer(pictures, data=request.data, partial=True)
         if serializer.is_valid():
@@ -139,7 +138,8 @@ class ExhibitionsView(APIView):
     def put(self, request, pk):
         exhibition = self.get_object(pk)
 
-        os.remove(exhibition.image.path)
+        if os.path.isfile(exhibition.image.path):
+            os.remove(exhibition.image.path)
 
         serializer = ExhibitionsSerializer(exhibition, data=request.data, partial=True)
         if serializer.is_valid():
@@ -172,7 +172,11 @@ class LikesView(APIView):
         return Likes.objects.get(pk=pk)
 
     def post(self, request):
-        serializer = LikesWriteSerializer(data=request.data)
+        user_id = request.user.id
+        request.data._mutable = True
+        request.data['account'] = user_id
+        request.data._mutable = False
+        serializer = LikesWriteSerializer(data=request.data, partial=True)
 
         if serializer.is_valid():
             serializer.save()
