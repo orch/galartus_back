@@ -10,6 +10,7 @@ from rest_framework import status
 from django_filters import rest_framework as filters
 import os
 from .permissions import StaffAndAdmin, UserOnly
+import json
 
 
 # Categories
@@ -157,9 +158,9 @@ class ExhibitionsView(APIView):
 
 
 # Likes
-class LikesListView(generics.ListAPIView):
-    queryset = Likes.objects.all()
-    serializer_class = LikesReadSerializer
+# class LikesListView(generics.ListAPIView):
+#     queryset = Likes.objects.all()
+#     serializer_class = LikesReadSerializer
     # filterset_fields = ['account']
 
 
@@ -183,11 +184,25 @@ class LikesView(APIView):
         else:
             return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def get(self, request):
+        user = request.user
+        likes = Likes.objects.filter(account=user)
+        serializer = LikesReadSerializer(likes, many=True)
 
-class LikesDeleteView(generics.DestroyAPIView):
-    queryset = Likes.objects.all()
-    serializer_class = LikesWriteSerializer
-    permission_classes = [UserOnly]
+        return HttpResponse(json.dumps(serializer.data), status=status.HTTP_200_OK)
+
+    def delete(self, request, pk):
+        user = request.user
+        like_to_delete = Likes.objects.get(account=user, picture=pk)
+        like_to_delete.delete()
+
+        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+
+# class LikesDeleteView(generics.DestroyAPIView):
+#     queryset = Likes.objects.all()
+#     serializer_class = LikesWriteSerializer
+#     permission_classes = [UserOnly]
 
 
 

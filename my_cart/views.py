@@ -6,13 +6,14 @@ from rest_framework.views import APIView
 from django.http import HttpResponse
 from rest_framework import status
 from main.permissions import UserOnly
-from .serializer import CartSerializer, CartLineSerializer
+from .serializer import CartSerializer
+import json
 
 
-class CartListView(generics.ListAPIView):
-    queryset = Cart.objects.all()
-    serializer_class = CartSerializer
-    permission_classes = [UserOnly]
+# class CartListView(generics.ListAPIView):
+#     queryset = Cart.objects.all()
+#     serializer_class = CartSerializer
+#     permission_classes = [UserOnly]
 
 
 class CartView(APIView):
@@ -38,6 +39,14 @@ class CartView(APIView):
         item_to_delete = order.items.get(id=item_id)
         item_to_delete.delete()
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+
+    def get(self, request):
+        user = request.user
+        get_data = request.query_params
+        orders = Cart.objects.filter(account=user, is_ordered=get_data['is_ordered'])
+        serializer = CartSerializer(orders, many=True)
+
+        return HttpResponse(json.dumps(serializer.data), status=status.HTTP_200_OK)
 
 
 class CartPaymentView(APIView):

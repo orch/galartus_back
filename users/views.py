@@ -9,13 +9,14 @@ import os
 from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
+import json
 
 
-class UsersListView(generics.ListAPIView):
-    queryset = NewUser.objects.all()
-    serializer_class = UsersPostSerializer
-    permission_classes = [IsAuthenticated]
-    filterset_fields = ['email']
+# class UsersListView(generics.ListAPIView):
+#     queryset = NewUser.objects.all()
+#     serializer_class = UsersPostSerializer
+#     permission_classes = [IsAuthenticated]
+#     filterset_fields = ['email']
 
 
 class UsersView(APIView):
@@ -70,6 +71,13 @@ class UsersView(APIView):
             return HttpResponse(serializer.data, status=status.HTTP_204_NO_CONTENT)
         else:
             return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request):
+        user = request.user
+        account = NewUser.objects.filter(account=user)
+        serializer = UsersPostSerializer(account, many=True)
+
+        return HttpResponse(json.dumps(serializer.data), status=status.HTTP_200_OK)
 
 
 class BlackListView(APIView):

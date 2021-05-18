@@ -17,7 +17,7 @@ urlpatterns = [
     path('exhibitions/<int:pk>', views.ExhibitionsView.as_view(), name='main'),
     path('exhibitions/<int:pk>/delete', views.ExhibitionsView.as_view(), name='main'),
 
-    path('likes', views.LikesListView.as_view()),
+    path('likes', views.LikesView.as_view(), name='main'),
     path('likes/create', views.LikesView.as_view(), name='main'),
-    path('likes/<int:pk>/delete', views.LikesDeleteView.as_view()),
+    path('likes/<int:pk>/delete', views.LikesView.as_view(), name='main'),
 ]

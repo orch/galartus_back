@@ -4,7 +4,7 @@ from main.serialize import ExhibitionsSerializer
 
 
 class CartLineSerializer(serializers.ModelSerializer):
-    exhibition = ExhibitionsSerializer(many=False)
+    exhibition = ExhibitionsSerializer(many=False, read_only=True)
 
     class Meta:
         model = CartLine
@@ -12,7 +12,7 @@ class CartLineSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(serializers.ModelSerializer):
-    items = CartLineSerializer(many=True)
+    items = CartLineSerializer(many=True, read_only=True)
 
     class Meta:
         model = Cart
