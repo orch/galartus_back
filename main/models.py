@@ -32,15 +32,6 @@ class Likes(models.Model):
     account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 
-class CartLine(models.Model):
-    exhibition = models.ForeignKey('Exhibitions', on_delete=models.CASCADE)
-    quantity = models.IntegerField()
-
-
-class Cart(models.Model):
-    cart_line = models.ForeignKey('CartLine', on_delete=models.CASCADE)
-    # account = models.ForeignKey('NewUser', on_delete=models.CASCADE)
-    amount = models.DecimalField(decimal_places=2, max_digits=14)
 
 
 

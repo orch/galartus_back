@@ -16,3 +16,7 @@ users/migrations/
 
 
 users/__pycache__/
+
+my_cart/migrations/
+
+my_cart/__pycache__/

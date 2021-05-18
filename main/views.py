@@ -10,7 +10,6 @@ from rest_framework import status
 from django_filters import rest_framework as filters
 import os
 from .permissions import StaffAndAdmin, UserOnly
-from users.models import NewUser
 
 
 # Categories
@@ -189,3 +188,8 @@ class LikesDeleteView(generics.DestroyAPIView):
     queryset = Likes.objects.all()
     serializer_class = LikesWriteSerializer
     permission_classes = [UserOnly]
+
+
+
+
+

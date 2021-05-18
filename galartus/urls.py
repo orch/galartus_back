@@ -22,14 +22,12 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView
 )
-from main import views
 
-# router = routers.DefaultRouter()
-# router.register(r'users', views.UserListView)
 
 urlpatterns = [
     path('', include('main.urls')),
     path('users/', include('users.urls')),
+    path('cart/', include('my_cart.urls')),
     path('admin/', admin.site.urls),
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),

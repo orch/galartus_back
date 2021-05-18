@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import Categories, Pictures, \
-                    Exhibitions,  Likes, \
-                    CartLine, Cart
+                    Exhibitions,  Likes
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
@@ -36,20 +35,4 @@ class LikesWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Likes
-        fields = '__all__'
-
-
-class CartLineSerializer(serializers.ModelSerializer):
-    exhibitions = ExhibitionsSerializer(many=False, read_only=True)
-
-    class Meta:
-        model = CartLine
-        fields = '__all__'
-
-
-class CartSerializer(serializers.ModelSerializer):
-    cart_line = CartLineSerializer(many=False, read_only=True)
-
-    class Meta:
-        model = Cart
         fields = '__all__'

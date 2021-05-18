@@ -21,8 +21,3 @@ urlpatterns = [
     path('likes/create', views.LikesView.as_view(), name='main'),
     path('likes/<int:pk>/delete', views.LikesDeleteView.as_view()),
 ]
-
-# path('accounts', views.AccountsListView.as_view()),
-# path('accounts/create', views.AccountsView.as_view(), name='main'),
-# path('accounts/<int:pk>', views.AccountsView.as_view(), name='main'),
-# path('accounts/<int:pk>/delete', views.AccountsView.as_view(), name='main'),

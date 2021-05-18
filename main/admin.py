@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Categories, Pictures, Exhibitions, Likes #, Accounts
+from .models import Categories, Pictures, Exhibitions, Likes
 # Register your models here.
 
 

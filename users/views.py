@@ -9,7 +9,6 @@ import os
 from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.permissions import BasePermission
 
 
 class UsersListView(generics.ListAPIView):
@@ -78,11 +77,10 @@ class BlackListView(APIView):
     def post(self, request):
         try:
             refresh_token = request.data['refresh_token']
-            print(refresh_token)
             token = RefreshToken(refresh_token)
-            print('qwet')
             token.blacklist()
-            print('jkl')
             return HttpResponse(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+
+
