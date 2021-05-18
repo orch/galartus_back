@@ -38,10 +38,8 @@ class CategoriesView(APIView):
     def put(self, request, pk):
         categories = self.get_object(pk)
 
-        try:
+        if os.path.isfile(categories.image.path) and request.data['image']:
             os.remove(categories.image.path)
-        except:
-            pass
 
         serializer = CategoriesSerializer(categories, data=request.data, partial=True)
         if serializer.is_valid():
@@ -84,7 +82,7 @@ class PicturesView(APIView):
     def put(self, request, pk):
         pictures = self.get_object(pk)
 
-        if os.path.isfile(pictures.image.path):
+        if os.path.isfile(pictures.image.path) and request.data['image']:
             os.remove(pictures.image.path)
 
         serializer = PicturesSerializer(pictures, data=request.data, partial=True)
@@ -138,7 +136,7 @@ class ExhibitionsView(APIView):
     def put(self, request, pk):
         exhibition = self.get_object(pk)
 
-        if os.path.isfile(exhibition.image.path):
+        if os.path.isfile(exhibition.image.path) and request.data['image']:
             os.remove(exhibition.image.path)
 
         serializer = ExhibitionsSerializer(exhibition, data=request.data, partial=True)
