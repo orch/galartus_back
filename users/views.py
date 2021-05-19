@@ -44,8 +44,7 @@ class UsersView(APIView):
     def put(self, request, pk):
         account = self.get_object(pk)
 
-        if account.image:
-            if os.path.isfile(account.image.path):
+        if os.path.isfile(account.image.path) and request.data.get('image'):
                 os.remove(account.image.path)
 
         serializer = self.get_serializer(request, account)

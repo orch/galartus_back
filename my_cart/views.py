@@ -42,8 +42,12 @@ class CartView(APIView):
 
     def get(self, request):
         user = request.user
-        get_data = request.query_params
-        orders = Cart.objects.filter(account=user, is_ordered=get_data['is_ordered'])
+        get_data = request.query_params.get('is_ordered')
+        if not get_data:
+            is_ordered = 0
+        else:
+            is_ordered = get_data
+        orders = Cart.objects.filter(account=user, is_ordered=is_ordered)
         serializer = CartSerializer(orders, many=True)
 
         return HttpResponse(json.dumps(serializer.data), status=status.HTTP_200_OK)
