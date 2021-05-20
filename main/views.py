@@ -170,17 +170,22 @@ class LikesView(APIView):
         return Likes.objects.get(pk=pk)
 
     def post(self, request):
-        user_id = request.user.id
+        user = request.user
         request.data._mutable = True
-        request.data['account'] = user_id
+        request.data['account'] = user.id
         request.data._mutable = False
-        serializer = LikesWriteSerializer(data=request.data, partial=True)
 
-        if serializer.is_valid():
-            serializer.save()
-            return HttpResponse(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            Likes.objects.get(account=user, picture=request.data['picture'])
+            return HttpResponse(request.data, status=status.HTTP_200_OK)
+        except:
+            serializer = LikesWriteSerializer(data=request.data, partial=True)
+
+            if serializer.is_valid():
+                serializer.save()
+                return HttpResponse(serializer.data, status=status.HTTP_200_OK)
+            else:
+                return HttpResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request):
         user = request.user
@@ -191,7 +196,7 @@ class LikesView(APIView):
 
     def delete(self, request, pk):
         user = request.user
-        like_to_delete = Likes.objects.get(account=user, picture=pk)
+        like_to_delete = Likes.objects.filter(account=user, picture=pk)
         like_to_delete.delete()
 
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)

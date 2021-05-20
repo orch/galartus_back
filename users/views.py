@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from .serialize import UsersPutSerializer, UsersPostSerializer
+from main.serialize import LikesReadSerializer, ExhibitionsSerializer
 from .models import NewUser
 from django.http import HttpResponse
 from rest_framework import status
@@ -8,7 +9,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 import os
 from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.permissions import IsAuthenticated
+from main.models import Likes, Exhibitions
+from main.permissions import UserOnly
 import json
 
 
@@ -89,5 +91,54 @@ class BlackListView(APIView):
             return HttpResponse(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return HttpResponse(status=status.HTTP_400_BAD_REQUEST)
+
+
+class RecommendationView(APIView):
+    permission_classes = [UserOnly]
+
+    def get_top_likes(self, dict):
+        top_likes = []
+
+        try:
+            max_key = max(dict, key=dict.get)
+            top_likes.append(max_key)
+            del dict[max_key]
+
+            max_key = max(dict, key=dict.get)
+            top_likes.append(max_key)
+            del dict[max_key]
+
+            max_key = max(dict, key=dict.get)
+            top_likes.append(max_key)
+            del dict[max_key]
+        except:
+            pass
+
+        return top_likes
+
+    def get(self, request):
+        user = request.user
+        like_categories = []
+        likes = Likes.objects.filter(account=user.id)
+
+        like_serializer = LikesReadSerializer(likes, many=True)
+
+        for like in like_serializer.data:
+            for key, value in like['picture'].items():
+                if key == 'categories':
+                    like_categories.extend(value)
+
+        auxiliary_list = list(set(like_categories))
+        auxiliary_dict = dict.fromkeys(auxiliary_list, 0)
+
+        for categ in like_categories:
+            auxiliary_dict[categ] += 1
+
+        top_likes = self.get_top_likes(auxiliary_dict)
+
+        exhibitions = Exhibitions.objects.filter(categories__in=top_likes)
+        exhib_serializer = ExhibitionsSerializer(exhibitions, many=True)
+
+        return HttpResponse(json.dumps(exhib_serializer.data), status=status.HTTP_200_OK)
 
 
