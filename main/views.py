@@ -9,7 +9,7 @@ from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from django_filters import rest_framework as filters
 import os
-from .permissions import StaffAndAdmin, UserOnly
+from .permissions import StaffOrAdmin, UserOnly, StaffOrAdminOrUser
 import json
 
 
@@ -22,7 +22,7 @@ class CategoriesListView(generics.ListAPIView):
 
 class CategoriesView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-    permission_classes = [StaffAndAdmin]
+    permission_classes = [StaffOrAdmin]
 
     def get_object(self, pk):
         return Categories.objects.get(pk=pk)
@@ -66,13 +66,14 @@ class PicturesListView(generics.ListAPIView):
 
 class PicturesView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-    permission_classes = [StaffAndAdmin]
+    permission_classes = [StaffOrAdmin]
 
     def get_object(self, pk):
         return Pictures.objects.get(pk=pk)
 
     def post(self, request):
         serializer = PicturesSerializer(data=request.data)
+        print(request.data)
         if serializer.is_valid():
             serializer.save()
             return HttpResponse(serializer.data, status=status.HTTP_200_OK)
@@ -119,7 +120,7 @@ class ExhibitionsListView(generics.ListAPIView):
 
 class ExhibitionsView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-    permission_classes = [StaffAndAdmin]
+    permission_classes = [StaffOrAdmin]
 
     def get_object(self, pk):
         return Exhibitions.objects.get(pk=pk)
@@ -164,7 +165,7 @@ class ExhibitionsView(APIView):
 
 class LikesView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-    permission_classes = [UserOnly]
+    permission_classes = [StaffOrAdminOrUser]
 
     def get_object(self, pk):
         return Likes.objects.get(pk=pk)
@@ -190,7 +191,7 @@ class LikesView(APIView):
     def get(self, request):
         user = request.user
         likes = Likes.objects.filter(account=user)
-        serializer = LikesReadSerializer(likes, many=True)
+        serializer = LikesReadSerializer(likes, many=True, context={'request': request})
 
         return HttpResponse(json.dumps(serializer.data), status=status.HTTP_200_OK)
 

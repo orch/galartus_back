@@ -10,7 +10,7 @@ import os
 from rest_framework import generics
 from rest_framework.parsers import MultiPartParser, FormParser
 from main.models import Likes, Exhibitions
-from main.permissions import UserOnly
+from main.permissions import StaffOrAdminOrUser
 import json
 
 
@@ -76,7 +76,7 @@ class UsersView(APIView):
     def get(self, request):
         user = request.user.email
         account = NewUser.objects.filter(email=user)
-        serializer = UsersPostSerializer(account, many=True)
+        serializer = UsersPostSerializer(account, many=True, context={'request': request})
 
         return HttpResponse(json.dumps(serializer.data), status=status.HTTP_200_OK)
 
@@ -94,7 +94,7 @@ class BlackListView(APIView):
 
 
 class RecommendationView(APIView):
-    permission_classes = [UserOnly]
+    permission_classes = [StaffOrAdminOrUser]
 
     def get_top_likes(self, dict):
         top_likes = []
@@ -136,8 +136,8 @@ class RecommendationView(APIView):
 
         top_likes = self.get_top_likes(auxiliary_dict)
 
-        exhibitions = Exhibitions.objects.filter(categories__in=top_likes)
-        exhib_serializer = ExhibitionsSerializer(exhibitions, many=True)
+        exhibitions = Exhibitions.objects.filter(categories__in=top_likes).distinct()
+        exhib_serializer = ExhibitionsSerializer(exhibitions, many=True, context={'request': request})
 
         return HttpResponse(json.dumps(exhib_serializer.data), status=status.HTTP_200_OK)
 

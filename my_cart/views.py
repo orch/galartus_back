@@ -5,7 +5,7 @@ from .models import Cart, CartLine
 from rest_framework.views import APIView
 from django.http import HttpResponse
 from rest_framework import status
-from main.permissions import UserOnly
+from main.permissions import UserOnly, StaffOrAdminOrUser, StaffOrAdmin
 from .serializer import CartSerializer
 import json
 
@@ -17,7 +17,7 @@ import json
 
 
 class CartView(APIView):
-    permission_classes = [UserOnly]
+    permission_classes = [StaffOrAdminOrUser]
 
     def put(self, request, pk, quantity):
         exhibition = Exhibitions.objects.get(id=pk)
@@ -48,13 +48,13 @@ class CartView(APIView):
         else:
             is_ordered = get_data
         orders = Cart.objects.filter(account=user, is_ordered=is_ordered)
-        serializer = CartSerializer(orders, many=True)
+        serializer = CartSerializer(orders, many=True, context={'request': request})
 
         return HttpResponse(json.dumps(serializer.data), status=status.HTTP_200_OK)
 
 
 class CartPaymentView(APIView):
-    permission_classes = [UserOnly]
+    permission_classes = [StaffOrAdminOrUser]
 
     def put(self, request):
         user = request.user
