@@ -1,0 +1,3 @@
+[submodule "galartus_front"]
+	path = galartus_front
+	url = https://github.com/IvanVilchinskij/galartus_front
