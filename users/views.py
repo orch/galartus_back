@@ -14,13 +14,6 @@ from main.permissions import StaffOrAdminOrUser
 import json
 
 
-# class UsersListView(generics.ListAPIView):
-#     queryset = NewUser.objects.all()
-#     serializer_class = UsersPostSerializer
-#     permission_classes = [IsAuthenticated]
-#     filterset_fields = ['email']
-
-
 class UsersView(APIView):
     parser_classes = [MultiPartParser, FormParser]
 

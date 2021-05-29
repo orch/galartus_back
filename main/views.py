@@ -1,16 +1,20 @@
 from django.http import HttpResponse
-from .models import Categories, Pictures, Exhibitions, Likes
+from .models import Categories, Pictures, Exhibitions, Likes, Employee
 from .serialize import CategoriesSerializer, PicturesSerializer, \
                        ExhibitionsSerializer,  \
-                       LikesReadSerializer, LikesWriteSerializer
-from rest_framework import generics, viewsets
+                       LikesReadSerializer, LikesWriteSerializer, \
+                       EmploeeSerializer
+from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from django_filters import rest_framework as filters
 import os
-from .permissions import StaffOrAdmin, UserOnly, StaffOrAdminOrUser
+from .permissions import StaffOrAdmin, StaffOnly, StaffOrAdminOrUser
 import json
+from my_cart.models import Cart
+from my_cart.serializer import CartSerializer
+from users.models import NewUser
 
 
 # Categories
@@ -109,7 +113,7 @@ class ExhibitionsFilter(filters.FilterSet):
 
     class Meta:
         model = Exhibitions
-        fields = ['name', 'id', 'categories', 'date', 'time', 'min_price', 'max_price', 'weekday']
+        fields = ['name', 'id', 'categories', 'date', 'time', 'min_price', 'max_price', 'is_active']
 
 
 class ExhibitionsListView(generics.ListAPIView):
@@ -152,17 +156,18 @@ class ExhibitionsView(APIView):
         if os.path.isfile(exhibition.image.path):
             os.remove(exhibition.image.path)
 
-        exhibition.delete()
-        return HttpResponse(status=status.HTTP_204_NO_CONTENT)
+        # exhibition.delete()
+
+        request.data['is_active'] = False
+        serializer = ExhibitionsSerializer(exhibition, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return HttpResponse(serializer.data, status=status.HTTP_204_NO_CONTENT)
+        else:
+            return HttpResponse(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Likes
-# class LikesListView(generics.ListAPIView):
-#     queryset = Likes.objects.all()
-#     serializer_class = LikesReadSerializer
-    # filterset_fields = ['account']
-
-
 class LikesView(APIView):
     parser_classes = [MultiPartParser, FormParser]
     permission_classes = [StaffOrAdminOrUser]
@@ -203,12 +208,36 @@ class LikesView(APIView):
         return HttpResponse(status=status.HTTP_204_NO_CONTENT)
 
 
-# class LikesDeleteView(generics.DestroyAPIView):
-#     queryset = Likes.objects.all()
-#     serializer_class = LikesWriteSerializer
-#     permission_classes = [UserOnly]
+# Employee
+class EmployeeView(APIView):
+    parser_classes = [MultiPartParser, FormParser]
+    # permission_classes = [StaffOnly]
 
+    def get(self, request):
+        orders = Cart.objects.filter(is_ordered=True)
+        orders_serial = CartSerializer(orders, many=True)
 
+        for cart in orders_serial.data:
+            account_id = cart['account']
+            amount = cart['amount']
+            for item in cart['items']:
+                if item['exhibition']['is_active']:
+                    quantity = item['quantity']
+                    exhibition_id = item['exhibition']['id']
+                    exhibition = Exhibitions.objects.get(pk=exhibition_id)
+                    account = NewUser.objects.get(pk=account_id)
+                    employee = Employee(exhibition=exhibition, account=account, quantity=quantity, amount=amount)
+                    employee.save()
+        try:
+            request.query_params['exhibition']
+        except:
+            employees = Employee.objects.all()
+            empl_serial = EmploeeSerializer(employees, many=True)
+            return HttpResponse(json.dumps(empl_serial.data), status=status.HTTP_200_OK)
+
+        employees = Employee.objects.filter(exhibition=request.query_params['exhibition'])
+        empl_serial = EmploeeSerializer(employees, many=True)
+        return HttpResponse(json.dumps(empl_serial.data), status=status.HTTP_200_OK)
 
 
 

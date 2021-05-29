@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from .models import Categories, Pictures, \
-                    Exhibitions,  Likes
+                    Exhibitions,  Likes, \
+                    Employee
+from users.serialize import UsersPostSerializer
 
 
 class CategoriesSerializer(serializers.ModelSerializer):
@@ -35,4 +37,13 @@ class LikesWriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Likes
+        fields = '__all__'
+
+
+class EmploeeSerializer(serializers.ModelSerializer):
+    # exhibition = ExhibitionsSerializer(read_only=True)
+    account = UsersPostSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = Employee
         fields = '__all__'

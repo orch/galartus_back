@@ -24,12 +24,19 @@ class Exhibitions(models.Model):
     time = models.TimeField()
     price = models.DecimalField(decimal_places=2, max_digits=8)
     address = models.CharField(max_length=250)
-    weekday = models.IntegerField(null=True)
+    is_active = models.BooleanField(default=True)
 
 
 class Likes(models.Model):
     picture = models.ForeignKey('Pictures', on_delete=models.CASCADE)
     account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+
+class Employee(models.Model):
+    exhibition = models.ForeignKey('Exhibitions', on_delete=models.CASCADE)
+    account = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    amount = models.DecimalField(decimal_places=2, max_digits=14, default=0)
 
 
 

@@ -10,12 +10,6 @@ from .serializer import CartSerializer
 import json
 
 
-# class CartListView(generics.ListAPIView):
-#     queryset = Cart.objects.all()
-#     serializer_class = CartSerializer
-#     permission_classes = [UserOnly]
-
-
 class CartView(APIView):
     permission_classes = [StaffOrAdminOrUser]
 
@@ -62,6 +56,7 @@ class CartPaymentView(APIView):
             order = Cart.objects.get(account=user, is_ordered=False)
         except:
             return HttpResponse(request.data, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
         order.is_ordered = True
         order.save()
 

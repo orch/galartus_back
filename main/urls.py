@@ -20,4 +20,6 @@ urlpatterns = [
     path('likes', views.LikesView.as_view(), name='main'),
     path('likes/create', views.LikesView.as_view(), name='main'),
     path('likes/<int:pk>/delete', views.LikesView.as_view(), name='main'),
+
+    path('employee', views.EmployeeView.as_view(), name='main')
 ]

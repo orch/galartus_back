@@ -4,7 +4,6 @@ from users.models import NewUser
 
 class UsersPostSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
-    # user_name = serializers.CharField(required=False)
     password = serializers.CharField(write_only=True)
 
     class Meta:
