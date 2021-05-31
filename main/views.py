@@ -211,7 +211,7 @@ class LikesView(APIView):
 # Employee
 class EmployeeView(APIView):
     parser_classes = [MultiPartParser, FormParser]
-    # permission_classes = [StaffOnly]
+    permission_classes = [StaffOnly]
 
     def get(self, request):
         orders = Cart.objects.filter(is_ordered=True)
